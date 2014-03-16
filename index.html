@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Egyptian numerals</title>
+</head>
+<body>
+
+<label>Напишите число в плебейской арабской системе:</label>
+<input type="text" name="arabic" id="arabic" onkeyup="convertToEgyptian(event)"><br>
+
+<p id="egyptian"></p>
+
+</body>
+<script type="text/javascript">
+    function convertToEgyptian(event) { 
+        var egyptianContainer = document.getElementById('egyptian')
+
+        //Remove the previous output.
+        while (egyptianContainer.firstChild) {
+            egyptianContainer.removeChild(egyptianContainer.firstChild);
+        }     
+
+        var arabic = event.target.value
+        var flattenedEgyptian = [];
+        var magnitudes = [
+            'http://bits.wikimedia.org/static-1.23wmf17/extensions/wikihiero/img/hiero_Z1.png', //1
+            'http://bits.wikimedia.org/static-1.23wmf17/extensions/wikihiero/img/hiero_V20.png', //10
+            'http://bits.wikimedia.org/static-1.23wmf17/extensions/wikihiero/img/hiero_V1.png', //100
+            'http://bits.wikimedia.org/static-1.23wmf17/extensions/wikihiero/img/hiero_M12.png', //1000
+            'http://bits.wikimedia.org/static-1.23wmf17/extensions/wikihiero/img/hiero_D50.png', //10000
+            'http://bits.wikimedia.org/static-1.23wmf17/extensions/wikihiero/img/hiero_I7.png', //100 000
+            'http://bits.wikimedia.org/static-1.23wmf17/extensions/wikihiero/img/hiero_C11.png', //1 000 000
+        ]
+
+        //Validate
+        arabicInt = parseInt(arabic)
+        minValue = 1
+        maxValue = 10000000
+
+        if (!(arabicInt >= minValue && arabicInt <= maxValue)) {
+            var error = document.createElement('span')
+            error.innerHTML = 'You should enter a number between ' + minValue + ' and ' + maxValue;
+            flattenedEgyptian.push(error)
+        } else {
+            var egyptian = arabic.split('').reverse().map(function(digit, orderOfMagnitude) {
+                var images = Array.apply(null, new Array(parseInt(digit))).map(function(){
+                    var img = new Image()
+                    img.src = magnitudes[orderOfMagnitude]
+                    return img
+                })
+
+                if (images.length) {
+                    images.push(document.createElement('br'))
+                }
+
+                return images
+            }).reverse()            
+            
+            flattenedEgyptian = flattenedEgyptian.concat.apply(flattenedEgyptian, egyptian);    
+        }    
+
+        flattenedEgyptian.forEach(function (img) {
+            egyptianContainer.appendChild(img)
+        })
+    }
+</script>
+</html>
